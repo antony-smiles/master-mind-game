@@ -1,11 +1,104 @@
-5
-8
-0 1 1 1 0 1 1 0
-6
-0 1 0 0 0 0
-6
-1 1 1 1 1 1
-5
-1 0 1 0 1
-9
-0 1 1 0 0 0 1 1 0
+/*
+ID: antonyn1
+TASK: friday
+LANG: C++                 
+*/
+#include<bits/stdc++.h>
+using namespace std;
+
+typedef struct{
+	string dlno,type,inputno;
+}Entry;
+
+typedef struct {
+	string name,type,direction;
+}Point;
+
+
+
+typedef struct {
+	string name,type,direction,behaviour;
+}Signal;
+
+
+typedef struct {
+	string name;
+	vector<Point> points;
+	vector<Signal> signals;
+}Track;
+
+string searcher(map<string,Entry> database,vector<string> keys,string faultname,string start,string end){
+	string ans=start;
+	for(string key:keys){
+		if(database.find(key)!=database.end())ans=ans+","+database[key];
+		else{
+			return key+" relay not found for " +faultname; 
+		}
+		ans=ans+","+end;
+		return ans;
+	}
+}
+
+
+
+vector<string> splitter(string s,char del){
+	stringstream ss(s);
+	string word;
+	vector<string> ans;
+	while(!ss.eof()){
+		getline(ss,word,del);
+		ans.push_back(word);
+	}
+	return ans;
+}
+
+int main(){
+ 	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+  	//ofstream fout ("friday.out");
+  	ifstream fin ("ride.in");
+  	int index=0;
+  	string s;
+  	vector<vector<Track> > tracks(1000,vector<Track>());
+  	while(fin>>s){
+  		vector<string> ans=splitter(s,',');
+  		for(string x : ans){
+  			vector<string> asset=splitter(x,'-');
+  			Track t;
+  			t.name=asset[0];
+  			for(int i=1;i<asset.size();i++){
+  				if(asset[i]=="P"){
+  					Point p;
+  					p.type=asset[++i];
+  					p.direction=asset[++i];
+  					p.name=asset[++i];
+  					t.points.push_back(p);
+  				}
+  				else if (asset[i]=="S"){
+  					Signal sg;
+  					sg.type=asset[++i];
+  					sg.direction=asset[++i];
+  					sg.behaviour=asset[++i];
+  					sg.name=asset[++i];
+  					t.signals.push_back(sg);
+  				}
+  			}
+  			tracks[index].push_back(t);	
+  		}
+  		
+  		index++;
+  		
+  	}
+  	ifstream din("dbms.in");
+  	string record;
+  	map<string,Entry> database;
+  	while(din>>record){
+  		vector<string>ans=splitter(record,',');
+  		Entry e;
+  		e.dlno=ans[0];
+  		e.type=ans[1];
+  		e.inputno=ans[2];
+  		database[ans[3]]=e;
+  	}
+      	return 0;
+}
